@@ -49,11 +49,11 @@
                         <i class='bx bx-grid-alt'></i>
                         <span x-show="sidebarOpen">Dashboard</span>
                     </li>
-                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='#'">
+                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='{{ route('companies.index') }}'">
                         <i class='bx bx-buildings'></i>
                         <span x-show="sidebarOpen">Compañías</span>
                     </li>
-                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='#'">
+                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='{{ route('invoices.create') }}'">
                         <i class='bx bx-receipt'></i>
                         <span x-show="sidebarOpen">Nueva Factura</span>
                     </li>
@@ -64,28 +64,13 @@
             <div class="mb-6">
                 <h3 class="text-xs font-semibold text-[#b0b3c7] uppercase tracking-wider mb-3" x-show="sidebarOpen">Gestión</h3>
                 <ul class="space-y-2">
-                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='#'">
+                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='{{ route('reports.index') }}'">
                         <i class='bx bx-bar-chart-alt-2'></i>
                         <span x-show="sidebarOpen">Reportes</span>
                     </li>
-                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='#'">
+                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200" onclick="window.location.href='{{ route('users.index') }}'">
                         <i class='bx bx-user-plus'></i>
                         <span x-show="sidebarOpen">Usuarios</span>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Sistema -->
-            <div class="mb-6">
-                <h3 class="text-xs font-semibold text-[#b0b3c7] uppercase tracking-wider mb-3" x-show="sidebarOpen">Sistema</h3>
-                <ul class="space-y-2">
-                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200">
-                        <i class='bx bx-cog'></i>
-                        <span x-show="sidebarOpen">Configuración</span>
-                    </li>
-                    <li class="flex items-center gap-3 text-[#b0b3c7] hover:text-white hover:bg-[#353a4a] rounded-lg px-3 py-2 cursor-pointer transition-all duration-200">
-                        <i class='bx bx-help-circle'></i>
-                        <span x-show="sidebarOpen">Ayuda</span>
                     </li>
                 </ul>
             </div>
@@ -110,7 +95,7 @@
 
             <!-- Tarjetas -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='#'">
+                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='{{ route('companies.index') }}'">
                     <div class="flex items-center mb-4">
                         <div class="bg-blue-500 p-3 rounded-lg mr-4">
                             <i class='bx bx-buildings text-2xl text-white'></i>
@@ -127,7 +112,7 @@
                     </div>
                 </div>
 
-                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='#'">
+                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='{{ route('invoices.create') }}'">
                     <div class="flex items-center mb-4">
                         <div class="bg-green-500 p-3 rounded-lg mr-4">
                             <i class='bx bx-receipt text-2xl text-white'></i>
@@ -144,7 +129,7 @@
                     </div>
                 </div>
 
-                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='#'">
+                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='{{ route('reports.index') }}'">
                     <div class="flex items-center mb-4">
                         <div class="bg-purple-500 p-3 rounded-lg mr-4">
                             <i class='bx bx-bar-chart-alt-2 text-2xl text-white'></i>
@@ -161,7 +146,7 @@
                     </div>
                 </div>
 
-                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='#'">
+                <div class="bg-[#232733] rounded-2xl shadow-lg p-6 card-hover cursor-pointer" onclick="window.location.href='{{ route('users.index') }}'">
                     <div class="flex items-center mb-4">
                         <div class="bg-orange-500 p-3 rounded-lg mr-4">
                             <i class='bx bx-user-plus text-2xl text-white'></i>

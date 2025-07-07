@@ -11,19 +11,17 @@ class CompanyWebController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Company::query();
+        $query = Company::where('user_id', auth()->id());
 
         // Búsqueda por razón social
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->search) {
             $query->where('razon_social', 'LIKE', '%' . $request->search . '%');
         }
 
-        // Mostrar solo las del usuario actual (esto es opcional si ya tienes login por token)
-        // $query->where('user_id', auth()->id());
+        $companies = $query->orderBy('created_at', 'desc')->paginate(4);
+        $search = $request->search;
 
-        $companies = $query->orderBy('created_at', 'desc')->paginate(10);
-
-        return view('companies.index', compact('companies'));
+        return view('companies.index', compact('companies', 'search'));
     }
 
     public function create()
@@ -33,85 +31,132 @@ class CompanyWebController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->validate([
-            'razon_social' => 'required|string|max:255',
-            'ruc' => ['required', 'string', 'regex:/^(10|20)\d{9}$/', new UniqueCompanyRule()],
-            'direccion' => 'required|string|max:255',
-            'sol_user' => 'required|string|max:255',
-            'sol_pass' => 'required|string|max:255',
-            'client_id' => 'nullable|string|max:255',
-            'client_secret' => 'nullable|string|max:255',
-            'production' => 'nullable|boolean',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png',
-            'cert' => 'required|file|mimes:pem,txt',
-        ]);
+        try {
+            // Validación básica
+            $data = $request->validate([
+                'razon_social' => 'required|string|max:255',
+                'ruc' => 'required|string|size:11',
+                'direccion' => 'required|string|max:255',
+                'production' => 'nullable',
+                'logo' => 'nullable|file|max:2048',
+                'certificado' => 'required|file|max:2048',
+            ]);
 
-        if ($request->hasFile('logo')) {
-            $data['logo_path'] = $request->file('logo')->store('logos');
+            // Verificar que se recibió el certificado
+            if (!$request->hasFile('certificado')) {
+                return back()->withErrors(['certificado' => 'El certificado es requerido'])->withInput();
+            }
+
+            // Procesar logo si existe
+            if ($request->hasFile('logo')) {
+                $data['logo_path'] = $request->file('logo')->store('logos', 'public');
+            }
+
+            // Procesar certificado
+            $data['cert_path'] = $request->file('certificado')->store('certificates', 'public');
+
+            // Asignar datos adicionales
+            $data['user_id'] = auth()->id();
+            $data['sol_user'] = auth()->user()->email;
+            $data['sol_pass'] = 'default_password';
+            $data['client_id'] = null;
+            $data['client_secret'] = null;
+            $data['production'] = $request->has('production') ? 1 : 0;
+
+            // Crear la empresa
+            $company = Company::create($data);
+
+            return redirect()->route('companies.index')->with([
+                'status' => 'created',
+                'message' => 'Empresa registrada exitosamente'
+            ]);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput();
+        } catch (\Exception $e) {
+            return back()->withErrors(['error' => 'Error: ' . $e->getMessage()])->withInput();
         }
-
-        $data['cert_path'] = $request->file('cert')->store('certs');
-        $data['user_id'] = auth()->id() ?? 1; // Temporal si no usas auth
-
-        $company = Company::create($data);
-
-        return redirect()->route('companies.index')->with('success', 'Empresa registrada correctamente.');
     }
 
     public function show($id)
     {
-        $company = Company::findOrFail($id);
-
+        $company = Company::where('user_id', auth()->id())->findOrFail($id);
         return view('companies.show', compact('company'));
     }
 
     public function edit($id)
     {
-        $company = Company::findOrFail($id);
-
+        $company = Company::where('user_id', auth()->id())->findOrFail($id);
         return view('companies.edit', compact('company'));
     }
 
     public function update(Request $request, $id)
     {
-        $company = Company::findOrFail($id);
+        $company = Company::where('user_id', auth()->id())->findOrFail($id);
 
         $data = $request->validate([
             'razon_social' => 'required|string|max:255',
-            'ruc' => ['required', 'string', 'regex:/^(10|20)\d{9}$/', new UniqueCompanyRule($company->id)],
+            'ruc' => 'required|string|size:11',
             'direccion' => 'required|string|max:255',
-            'sol_user' => 'required|string|max:255',
-            'sol_pass' => 'required|string|max:255',
-            'client_id' => 'nullable|string|max:255',
-            'client_secret' => 'nullable|string|max:255',
-            'production' => 'nullable|boolean',
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png',
-            'cert' => 'nullable|file|mimes:pem,txt',
+            'production' => 'nullable',
+            'logo' => 'nullable|file|max:2048',
+            'certificado' => 'nullable|file|max:2048',
         ]);
 
         if ($request->hasFile('logo')) {
-            $data['logo_path'] = $request->file('logo')->store('logos');
+            if ($company->logo_path) {
+                Storage::disk('public')->delete($company->logo_path);
+            }
+            $data['logo_path'] = $request->file('logo')->store('logos', 'public');
         }
 
-        if ($request->hasFile('cert')) {
-            $data['cert_path'] = $request->file('cert')->store('certs');
+        if ($request->hasFile('certificado')) {
+            if ($company->cert_path) {
+                Storage::disk('public')->delete($company->cert_path);
+            }
+            $data['cert_path'] = $request->file('certificado')->store('certificates', 'public');
         }
+
+        $data['production'] = $request->has('production') ? 1 : 0;
 
         $company->update($data);
 
-        return redirect()->route('companies.index')->with('success', 'Empresa actualizada.');
+        return redirect()->route('companies.index')->with([
+            'status' => 'updated',
+            'message' => 'Empresa actualizada exitosamente'
+        ]);
     }
 
     public function destroy($id)
     {
-        $company = Company::findOrFail($id);
+        $company = Company::find($id);
+        
+        if (!$company) {
+            return redirect()->route('companies.index')->with([
+                'status' => 'error',
+                'message' => 'Empresa no encontrada'
+            ]);
+        }
 
-        // También puedes eliminar los archivos si deseas
-        if ($company->logo_path) Storage::delete($company->logo_path);
-        if ($company->cert_path) Storage::delete($company->cert_path);
+        if ($company->user_id !== auth()->id()) {
+            return redirect()->route('companies.index')->with([
+                'status' => 'error',
+                'message' => 'No tienes permisos para eliminar esta empresa'
+            ]);
+        }
+
+        if ($company->logo_path) {
+            Storage::disk('public')->delete($company->logo_path);
+        }
+        if ($company->cert_path) {
+            Storage::disk('public')->delete($company->cert_path);
+        }
 
         $company->delete();
 
-        return redirect()->route('companies.index')->with('success', 'Empresa eliminada.');
+        return redirect()->route('companies.index')->with([
+            'status' => 'deleted',
+            'message' => 'Empresa eliminada exitosamente'
+        ]);
     }
 }

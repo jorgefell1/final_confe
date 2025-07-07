@@ -75,6 +75,10 @@ form {
   margin: 30px 0;
 }
 
+.form-box.register .input-box {
+  margin: 20px 0;
+}
+
 .input-box input {
   width: 100%;
   padding: 13px 50px 13px 20px;
@@ -85,6 +89,11 @@ form {
   font-size: 16px;
   color: #333;
   font-weight: 500;
+}
+
+.form-box.register .input-box input {
+  padding: 10px 45px 10px 15px;
+  font-size: 14px;
 }
 
 .input-box input::placeholder {
@@ -98,6 +107,11 @@ form {
   top: 50%;
   transform: translateY(-50%);
   font-size: 20px;
+}
+
+.form-box.register .input-box i {
+  right: 15px;
+  font-size: 18px;
 }
 
 .forgot-link {
@@ -121,6 +135,21 @@ form {
   font-weight: 600;
 }
 
+.form-box.register .btn {
+  height: 42px;
+  font-size: 14px;
+}
+
+.form-box.register h1 {
+  font-size: 28px !important;
+  margin: -5px 0 10px 0;
+}
+
+.form-box.register p {
+  font-size: 12px !important;
+  margin: 10px 0;
+}
+
 .social-icons {
   display: flex;
   justify-content: center;
@@ -134,6 +163,12 @@ form {
   font-size: 24px;
   color: #333;
   margin: 0 8px;
+}
+
+.form-box.register .social-icons a {
+  padding: 8px;
+  font-size: 20px;
+  margin: 0 6px;
 }
 
 .toggle-box {

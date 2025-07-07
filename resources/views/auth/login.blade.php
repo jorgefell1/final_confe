@@ -44,9 +44,46 @@
         </form>
       </div>
 
-      {{-- Formulario de REGISTRO DESACTIVADO --}}
-      <div class="form-box register" style="display: none;">
-        {{-- Aquí va tu formulario de registro (pendiente para el futuro) --}}
+      {{-- Formulario de REGISTRO ACTIVO --}}
+      <div class="form-box register">
+        <form method="POST" action="{{ route('register') }}">
+          @csrf
+          <h1 style="font-size: 28px;">Registro</h1>
+
+          {{-- Errores de validación --}}
+          @if ($errors->any())
+              <div class="error-message" style="color: red; margin-bottom: 1rem; font-size: 12px;">
+                  @foreach ($errors->all() as $error)
+                      <div>{{ $error }}</div>
+                  @endforeach
+              </div>
+          @endif
+
+          <div class="input-box" style="margin: 20px 0;">
+            <input type="text" name="name" placeholder="Nombre completo" required value="{{ old('name') }}" style="padding: 10px 45px 10px 15px; font-size: 14px;" />
+            <i class="bx bxs-user" style="font-size: 18px;"></i>
+          </div>
+          <div class="input-box" style="margin: 20px 0;">
+            <input type="email" name="email" placeholder="Correo electrónico" required value="{{ old('email') }}" style="padding: 10px 45px 10px 15px; font-size: 14px;" />
+            <i class="bx bxs-envelope" style="font-size: 18px;"></i>
+          </div>
+          <div class="input-box" style="margin: 20px 0;">
+            <input type="password" name="password" placeholder="Contraseña" required style="padding: 10px 45px 10px 15px; font-size: 14px;" />
+            <i class="bx bxs-lock-alt" style="font-size: 18px;"></i>
+          </div>
+          <div class="input-box" style="margin: 20px 0;">
+            <input type="password" name="password_confirmation" placeholder="Confirmar contraseña" required style="padding: 10px 45px 10px 15px; font-size: 14px;" />
+            <i class="bx bxs-lock-alt" style="font-size: 18px;"></i>
+          </div>
+          <button type="submit" class="btn" style="height: 42px; font-size: 14px;">Registrarse</button>
+          <p style="font-size: 12px; margin: 10px 0;">o registrarse con plataformas sociales</p>
+          <div class="social-icons">
+            <a href="#" style="padding: 8px; font-size: 20px;"><i class="bx bxl-google"></i></a>
+            <a href="#" style="padding: 8px; font-size: 20px;"><i class="bx bxl-facebook"></i></a>
+            <a href="#" style="padding: 8px; font-size: 20px;"><i class="bx bxl-github"></i></a>
+            <a href="#" style="padding: 8px; font-size: 20px;"><i class="bx bxl-linkedin"></i></a>
+          </div>
+        </form>
       </div>
 
       {{-- Panel de animación --}}
